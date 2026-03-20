@@ -1,3 +1,7 @@
+Desarrollé este proyecto para aplicar SQL en un contexto contable real, 
+combinando mi formación en Contabilidad con lo que estoy aprendiendo en 
+análisis de datos.
+
 # Sistema de Gestión Contable en SQL
 
 Base de datos relacional para el registro y análisis de movimientos contables,
