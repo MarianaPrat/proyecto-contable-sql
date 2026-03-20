@@ -1,24 +1,34 @@
-Sistema de base de datos para gestion contable y reportes
+# Sistema de Gestión Contable en SQL
 
-Descripción del proyecto
-Este proyecto consiste en el diseño de una base de datos relacional orientada a la gestion de movimientos contables. El objetivo fue asegurar la integridad de los datos mediante el uso de transacciones y automatizar el registro de la partida doble para evitar errores manuales.
+Base de datos relacional para el registro y análisis de movimientos contables,
+implementando el principio de partida doble con garantías de integridad transaccional.
 
-Herramientas utilizadas
-Se utilizo MySQL para el motor de base de datos y SQL para el desarrollo de la estructura y la lógica. Se implementaron procedimientos almacenados, vistas, transacciones y expresiones de tabla comunes (CTEs).
+## Estructura del repositorio
 
-Implementaciones técnicas
+| Archivo | Contenido |
+|---|---|
+| `01_tablas.sql` | Creación de tablas y constraints |
+| `02_logica.sql` | Vista del Libro Diario y procedimiento de registro |
+| `03_reportes.sql` | Balance de sumas y saldos + reporte con semáforo |
+| `04_datos.sql` | Datos de ejemplo para pruebas |
 
-Estructura de datos
-Se definieron las tablas de Cuentas y Movimientos vinculadas mediante claves foráneas. El diseño sigue principios de normalización para asegurar la consistencia de los datos y facilitar el mantenimiento del plan de cuentas.
+## Modelo de datos
 
-Automatización y Transacciones
-Se desarrollo el procedimiento sp_registrar_asiento que procesa el debe y el haber en una sola ejecución. El procedimiento incluye bloques de transacciones (START TRANSACTION y COMMIT) para garantizar la atomicidad; es decir, que los movimientos se registren en pareja o no se registren en caso de error, protegiendo la integridad del sistema.
+**Cuentas** — Plan de cuentas con validación de tipo (Activo, Pasivo, 
+Patrimonio Neto, Ingreso, Egreso).  
+**Movimientos** — Registros contables vinculados a cuentas mediante FK.
 
-Capa de consulta y abstracción
-Se diseño la vista v_libro_diario que consolida la información de las tablas relacionadas. Esto permite realizar auditorias y consultas de movimientos de forma directa, ocultando la complejidad de los joins internos.
+## Decisiones de diseño
 
-Logica de análisis
-Se incluyo un reporte de gestion utilizando CTEs (WITH) y sentencias CASE para analizar el volumen de los movimientos. El script calcula promedios sobre valores absolutos para identificar desviaciones y categoriza las cuentas según su saldo, permitiendo identificar gastos críticos o niveles de superavit de forma automática.
+**Partida doble garantizada por transacción:** el procedimiento 
+`sp_registrar_asiento` registra el debe y el haber en una única transacción.
+Si cualquiera de los dos INSERT falla, se ejecuta un ROLLBACK automático y 
+ningún movimiento queda registrado. Esto hace imposible romper el equilibrio 
+contable desde la capa de base de datos.
 
-Uso del repositorio
-El script schema.sql contiene la creación de tablas, mientras que la lógica de operación se encuentra en los archivos de procedimientos y reportes. La carga de datos se realiza a traves del procedimiento almacenado para mantener los estándares de validación definidos.
+**Separación de reportes por naturaleza de cuenta:** los reportes filtran 
+por tipo de cuenta para evitar comparar saldos de distinta naturaleza 
+(patrimonial vs. resultados).
+
+## Herramientas
+MySQL · SQL · Stored Procedures · Views · CTEs · Transactions
